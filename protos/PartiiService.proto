@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+package partii;
+option java_package = "partii.grpc";
+
+service Transcription {
+        rpc LiveTranscribe(stream AudioData) returns (stream TranscriptionResult) {}
+		rpc GetAvailable(EmptyMsg) returns (AvailableConnection) {}
+		rpc GetBuildNumber(EmptyMsg) returns (BuildNumber) {}
+}
+
+message Word {
+	string wordstr = 1;
+}
+
+message WordResult {
+	int64 wordid = 1;
+	string wordstr = 2;
+}
+
+message EmptyMsg {}
+
+message AvailableConnection {
+		int64 Available = 1;
+}
+
+message BuildNumber {
+		string BuildDate = 1;
+}
+
+enum AudioCodec {
+        LINEAR16 = 0;
+		SPEEX = 1;
+		FLAC = 2;
+		MP3 = 3;
+		MULAW = 4;
+		AMR = 5;
+		AMR_WB = 6;
+		OGG_OPUS = 7;
+}
+
+enum ResultType {
+		PARTIAL = 0;
+		RESULT = 1;
+		FINISHED = 2;
+}
+
+
+message AuthData {
+        string ApiKey = 1;
+		int64 SamplingRate = 2;
+		string ClientID = 3;
+		int64 Codec = 4;
+}
+
+message AuthStatus {
+        string Message = 1;
+		StatusCode AuthStatus = 2;
+}
+
+enum AudioDataType {
+		SPEECH = 0;
+		NONSPEECH = 1;
+		ENDPOINT = 2;
+}
+
+message AudioData {
+        bytes ByteChunk = 1;
+		int64 Bytelen = 2;
+		AudioDataType Datatype = 3;
+}
+
+enum StatusCode {
+        Unknown = 0;
+        Ok = 1;
+        Failed = 2;
+}
+
+message WordsLevel {
+
+		string word = 1;
+		float confidence = 2;
+		float startTime = 3;
+		float endTime = 4;
+		int64 wordNumber = 5;
+		
+		repeated PhonesLevel phones = 6;
+		
+}
+
+message PhonesLevel {
+
+		string phone = 1;
+		float confidence = 2;
+		float startTime = 3;
+		float endTime = 4;
+		int64 phoneNumber = 5;
+		
+}
+
+message TranscriptionResult {
+		string transcript = 1;
+		float confidence = 2;
+		float startTime = 3;
+		float endTime = 4;
+		int64 sentenceNumber = 5;
+		ResultType sentenceType = 6;
+		
+		repeated WordsLevel words = 7;
+		StatusCode Status = 8;
+		
+}
+
+message CalibrateVadResult {
+		float vadthreshold = 1;
+		StatusCode Status = 2;
+		
+}
+
+message WakeWordResult {
+		string word = 1;
+		float confidence = 2;
+		float startTime = 3;
+		float endTime = 4;
+		int64 wakewordNumber = 5;
+		ResultType sentenceType = 6;
+		StatusCode Status = 7;
+		
+}

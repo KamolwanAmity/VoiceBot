@@ -1,0 +1,71 @@
+body{
+  font-family: 'Kanit', sans-serif;
+}
+h3, h4{
+  font-family: 'Kanit', sans-serif;
+}
+.logo-top{
+ 
+  top: 25px;
+  left: 30px;
+}
+
+.img-aree{
+  margin: auto;
+  width: 200px;
+}
+.img-aree img{
+  width: 100%;
+}
+.text-aree{
+  text-align: center;
+  padding-top: 20px;
+  color: #6ec9e2;
+}
+.areethink,.question,.aree{
+  width: 100%;
+}
+.btn-circle{
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  border: none;
+  margin: auto;
+  display: block;
+}
+.group{
+  width: 300px;
+  clear: both;
+  margin: 0 auto;
+}
+.textarea{
+  width: 100%;
+  height: 40px;
+  border-radius: 10px;
+  /* max-width: 90%; */
+  -webkit-box-shadow: 0 5px 5px rgba(0,0,0,.2);
+  box-shadow: 0 5px 5px rgba(0,0,0,.2);
+
+}
+.aree{
+  width: 100%;
+  text-align: center;
+}
+.input-label{
+  text-align: left;
+  width: 100%;
+  display: block;
+}
+.think{
+  margin-bottom: 5px;
+}
+.nongaree{
+  margin: 5px;
+}
+.audio{
+  margin-bottom: 10px;
+}
+.tab{
+  background-color: #6ec9e2;
+  color: #6ec9e2;
+}
