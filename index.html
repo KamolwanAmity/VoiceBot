@@ -1,0 +1,346 @@
+<!-- <!DOCTYPE html> -->
+<!--
+ Copyright 2020 Google LLC
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<html>
+
+<head>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<meta charset="utf-8" />
+	<title>RD voice bot</title>
+	<!-- <meta http-equiv="content-type" content="text/html; charset=utf-8" /> -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<base href="/" />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+	<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@100;300;400;500;700;900&display=swap"
+		rel="stylesheet">
+
+	<link rel="stylesheet" href="css/style.css">
+	<script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io-stream/0.9.1/socket.io-stream.js"></script>
+
+	<!-- <link rel="stylesheet" type="text/css" href="../style.css"> -->
+	<link rel="stylesheet" type="text/css"
+		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+	const socketio = io();
+	let url = "";
+	let text = "";
+	socketio.on("urlEvent", function (msg) {
+		//document.getElementById("audioplayer").style.display = "block";
+		url = msg.url;
+		text = msg.text;
+		$("#audioSource").attr("src", url);
+		$("#audioplayer")[0].load();
+		$("#audioplayer")[0].play();
+		$("#audioplayer").bind('ended', function(){
+    		// done playing
+		const startRecording = document.getElementById('start-recording');
+		//startRecording.disabled = false;
+		//startRecording.style.backgroundColor = "#6ec9e2";
+		});
+		let vajaResult = document.getElementById('cvl-result');
+		vajaResult.innerHTML = text.replace(/\<sp1\>/g, " ");
+		console.log(msg);
+		startRecording.disabled = false;
+		startRecording.style.backgroundColor = "#6ec9e2";
+	});
+</script>
+
+<body>
+	<div class="container">
+		<div class="tab">
+			<p>t</p>
+		</div>
+		<div class="logo-top">
+			<img src="img/logo.png" alt="">
+		</div>
+		<div class="group">
+			<div class="aree">
+				<div class="img-aree">
+					<img src="img/aree.png" alt="">
+				</div>
+				<div class="text-aree">
+					<h4 class="nongaree">น้องอารี</h4>
+				</div>
+
+				<p class="think">
+					<span class="input-label">น้องอารีคิดว่า : </span>
+					<textarea class="textarea" id="cvl-result"></textarea>
+				</p>
+
+
+				<div class="audio">
+					<div style="text-align: center">
+						<audio id="audioplayer" controls autoplay>
+							<source id="audioSource" type="audio/ogg" />
+							Your browser does not support the audio element.
+						</audio>
+					</div>
+				</div>
+
+				<p class="think">
+					<span class="input-label">คำถาม : </span>
+					<textarea class="textarea" id="results"></textarea>
+				</p>
+			</div>
+
+
+			<div>
+			</br>
+			</br>
+				<button class="btn-circle" id="start-recording" style="background-color: #6ec9e2"><i
+						class="fa fa-microphone fa-2x" style="color:#fff;"></i></button> <!-- mediumturquoise -->
+				<button class="btn-circle" id="stop-recording" style="background-color: red; display:none;"><i
+						class="fa fa-stop fa-2x" style="color:#fff;"></i></button>
+			</div>
+			
+		</div>
+
+		<!-- <h1 style="font-size: 20px;text-align: center;">Vaja Responses</h1>
+		<div style="text-align: center">
+			<h1 style="font-size: 20px;">Result:
+				<textarea id="cvl-result" style="width: 300px; height: 50px;"></textarea>
+			</h1> -->
+	</div>
+
+	</div>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+	<script type="text/javascript">
+		$(function () {
+			// $('#start-recording').on('click', function () {
+			// 	$(this).hide();
+			// 	$('#stop-recording').show();
+			// })
+			// $('#stop-recording').on('click', function () {
+			// 	$(this).hide();
+			// 	$('#start-recording').show();
+			// })
+		});
+
+		const startRecording = document.getElementById('start-recording');
+		const stopRecording = document.getElementById('stop-recording');
+		let recordAudio;
+		var clientid = "";
+		var recording = false;
+		var stoprecording = false;
+		socketio.on('connect', function () {
+			startRecording.disabled = false;
+		});
+		var FinalResult;
+		//let flag =0;
+
+		socketio.on("server_setup", (connect_status, uid) => {
+			if (connect_status == 'true') {
+				clientid = uid;
+			}
+			console.log("Connected [" + connect_status + "], " + uid);
+		});
+
+		socketio.on("partii_setup", (connect_status, uid) => {
+			if (connect_status == 'true') {
+				clientid = uid;
+			}
+			console.log("Partii connected [" + connect_status + "], " + uid);
+		});
+
+		if (navigator.getUserMedia) {
+			navigator.getUserMedia({ audio: true }, initializeRecorder, function (e) {
+				alert('Error capturing audio.');
+			});
+		} else alert('getUserMedia not supported in this browser. Try to use Firefox');
+
+		function initializeRecorder(stream) {
+			audioContext = window.AudioContext || window.webkitAudioContext;
+			context = new audioContext();
+
+			// the sample rate is in context.sampleRate
+			console.log("context.sampleRate:", context.sampleRate);
+
+			audioInput = context.createMediaStreamSource(stream);
+
+			var bufferSize = 2048;
+			recorder = context.createScriptProcessor(bufferSize, 1, 1);
+
+			recorder.onaudioprocess = function (stream) {
+				if (recording && !stoprecording) {
+					var left = stream.inputBuffer.getChannelData(0);
+					if (context.sampleRate != 16000) {
+						left = downsampleBuffer(left, context.sampleRate, 16000); //downsampling rate
+					} else {
+						left = convertoFloat32ToInt16(left);
+					}
+
+					socketio.emit('stream-audio', { audio_data: left, clientid: clientid });
+				}
+
+			}
+
+			audioInput.connect(recorder)
+			recorder.connect(context.destination);
+		}
+
+		var downsampleBuffer = function (buffer, sampleRate, outSampleRate) {
+			if (outSampleRate == sampleRate) {
+				return buffer;
+			}
+			if (outSampleRate > sampleRate) {
+				throw "downsampling rate show be smaller than original sample rate";
+			}
+			var sampleRateRatio = sampleRate / outSampleRate;
+			var newLength = Math.round(buffer.length / sampleRateRatio);
+			var result = new Int16Array(newLength);
+			var offsetResult = 0;
+			var offsetBuffer = 0;
+			while (offsetResult < result.length) {
+				var nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio);
+				var accum = 0, count = 0;
+				for (var i = offsetBuffer; i < nextOffsetBuffer && i < buffer.length; i++) {
+					accum += buffer[i];
+					count++;
+				}
+
+				result[offsetResult] = Math.min(1, accum / count) * 0x7FFF;
+				offsetResult++;
+				offsetBuffer = nextOffsetBuffer;
+			}
+			return result.buffer;
+		}
+
+
+		startRecording.onclick = function () {
+			startRecording.style.backgroundColor = "#AFAFAF";
+			startRecording.disabled = true;
+			stopRecording.disabled = false;
+			$('#stop-recording').show();
+			$('#start-recording').hide();
+
+			resultpreview.innerHTML = "";
+			FinalResult = "";
+
+			recording = true;
+			stoprecording = false;
+
+			setTimeout(stopRecording.onclick, 30000);
+			console.log("auto-stop");
+
+		};
+
+		// 4)
+		// on stop button handler
+		stopRecording.onclick = function () {
+			// recording stopped
+			//startRecording.disabled = false;
+			stopRecording.disabled = true;
+			//startRecording.style.backgroundColor = "#6ec9e2";
+			$('#start-recording').show();
+			$('#stop-recording').hide();
+			recording = false;
+			stoprecording = true;
+			flag = 1;
+
+			//recordAudio.stopRecording(function() {
+			socketio.emit('stop-audio', { audio_data: "", clientid: clientid });
+			//});
+
+		};
+
+		function convertoFloat32ToInt16(buffer) {
+			var l = buffer.length;
+			var buf = new Int16Array(l)
+
+			while (l--) {
+				buf[l] = buffer[l] * 0xFFFF;    //convert to 16 bit
+			}
+			const wav = new Blob([buf.buffer], { type: 'audio/wav' });
+			return wav;
+			//return buf.buffer;
+		}
+
+		var resultpreview = document.getElementById('results');
+		//const intentInput = document.getElementById('intent');
+		//const textInput = document.getElementById('queryText');
+
+		socketio.on("stream-transcript", (data) => {
+			console.log("transcript [" + data.Status + "," + data.sentenceType + "], " + data);
+
+			if(data.Status = "Failed"){
+            var str = data.transcript;
+            var checkStatus = str.includes("Over maximum worker");
+            if(checkStatus == true){
+                //do a thing 
+                alert("All chat channels are now fully! Please inquire again later");
+				stopRecording.onclick();
+            }
+			else {
+
+			if (data.sentenceType == "RESULT") {
+				resultpreview.innerHTML += data.transcript;
+				FinalResult = resultpreview.innerHTML;
+				console.log(FinalResult);
+				var parameters = {
+					timestamp: 1628049108,
+					text: FinalResult,
+					replyToken: "1234",
+					id: "1111",
+					sender: "1112",
+					thread_id: clientid,
+					cookie: "INGRESSCOOKIE=1114",
+				};
+				console.log("Text to CVL :" + parameters.text);
+				if (parameters.text == "")
+				{
+					startRecording.disabled = false;
+					startRecording.style.backgroundColor = "#6ec9e2";
+				};
+
+				$.ajax({
+					url: "https://rd-poc.convolab.ai/messagelogic/partii_in",
+					type: "post",
+					data: parameters,
+					headers: {
+						Authorization: "Basic b3JpZ2luQGNvbnZvbGFiLmFpOjFxYXpaQVEh",
+						cookie: "INGRESSCOOKIE=1234",
+					},
+					dataType: "json",
+					success: function () {
+						//console.info(data);
+						console.log("OK");
+					},
+				});
+
+			}
+
+			if (data.sentenceType == "FINISHED") {
+				console.log(data);
+			}
+		  }
+	     }
+
+		});
+		// Send Partii result to CVL
+
+
+
+	</script>
+
+</body>
+
+</html>
